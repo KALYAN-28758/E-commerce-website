@@ -10,8 +10,7 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/volt-e
 
 // Middleware
 app.use(cors({
-  origin: "*",
-  credentials: true
+  origin: "*"
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
