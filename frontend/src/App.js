@@ -249,10 +249,7 @@ function App() {
     document.head.appendChild(style);
   }, []);
 
-  const API_BASE =
-  process.env.REACT_APP_API_URL
-    ? process.env.REACT_APP_API_URL.replace(/\/$/, '')
-    : '';
+  const API_BASE = (process.env.REACT_APP_API_URL || '').replace(/\/$/, '');
   const [token, setToken] = useState(localStorage.getItem('volt_token') || '');
   const protectedPages = new Set(['shop', 'wishlist', 'orders', 'cart', 'detail', 'profile']);
   const nav = (p) => {
