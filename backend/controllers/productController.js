@@ -11,25 +11,58 @@ exports.getProducts = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
   try {
-    const { name, price, orig, cat, desc, emoji, stock, image } = req.body;
-    const product = await Product.create({
+
+    console.log("\n📦 PRODUCT BODY RECEIVED:");
+    console.log(req.body);
+
+    const {
       name,
       price,
       orig,
-      cat: typeof cat === 'string' ? cat.trim() : cat,
+      cat,
       desc,
       emoji,
       stock,
       image
-    });
-    console.log('\n✅ NEW PRODUCT ADDED TO MONGODB:');
-    console.log('==================================');
-    console.log(JSON.stringify(product, null, 2));
-    console.log('==================================\n');
+    } = req.body;
+
+    // Validation
+    if (!name || !price || !cat) {
+      return res.status(400).json({
+        message: 'Name, price and category are required.'
+      });
+    }
+
+    const productData = {
+      name: String(name).trim(),
+      price: Number(price),
+      orig: orig ? Number(orig) : Number(price),
+      cat: String(cat).trim(),
+      desc: desc || '',
+      emoji: emoji || '🛍️',
+      stock: stock ? Number(stock) : 0,
+      image: image || ''
+    };
+
+    console.log("\n✅ FINAL PRODUCT DATA:");
+    console.log(productData);
+
+    const product = await Product.create(productData);
+
+    console.log("\n✅ PRODUCT INSERTED:");
+    console.log(product);
+
     res.status(201).json(product);
+
   } catch (error) {
-    console.error('❌ ERROR ADDING PRODUCT:', error.message);
-    res.status(400).json({ message: 'Failed to create product.', error: error.message });
+
+    console.log("\n❌ PRODUCT CREATE ERROR:");
+    console.log(error);
+
+    res.status(500).json({
+      message: 'Failed to create product.',
+      error: error.message
+    });
   }
 };
 
