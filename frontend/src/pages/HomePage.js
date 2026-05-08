@@ -6,7 +6,7 @@ function HomePage({ products, onNav, authUser }) {
   return (
     <div className="hero">
       <div>
-        <div className="hero-tag">New Drop 2024</div>
+        <div className="hero-tag">New Drop 2026</div>
         <h1>Shop <span>bold.</span><br />Live free.</h1>
         <p>Curated products delivered with speed and style. No noise, just the good stuff.</p>
         <div className="hero-btns">
