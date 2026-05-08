@@ -1,49 +1,73 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
+
   name: {
     type: String,
     required: [true, 'Product name is required'],
     trim: true
   },
+
   price: {
     type: Number,
     required: [true, 'Price is required'],
-    min: 0
+    min: [0, 'Price cannot be negative']
   },
+
   orig: {
     type: Number,
-    default: null
+    default: 0,
+    min: [0, 'Original price cannot be negative']
   },
+
   cat: {
     type: String,
     required: [true, 'Category is required'],
-    enum: ['Electronics', 'Kitchen', 'Home', 'Stationery', 'Fashion', 'Furniture', 'Other'],
-    trim: true,
-    set: (value) => typeof value === 'string' ? value.trim() : value
+    enum: {
+      values: [
+        'Electronics',
+        'Kitchen',
+        'Home',
+        'Stationery',
+        'Fashion',
+        'Furniture',
+        'Other'
+      ],
+      message: 'Invalid category'
+    },
+    trim: true
   },
+
   desc: {
     type: String,
-    required: [true, 'Description is required']
+    required: [true, 'Description is required'],
+    trim: true
   },
+
   emoji: {
     type: String,
-    required: true
+    default: '🛍️'
   },
+
   stock: {
     type: Number,
     required: true,
-    min: 0,
-    default: 0
+    default: 0,
+    min: [0, 'Stock cannot be negative']
   },
+
   image: {
     type: String,
-    default: null
+    default: ''
   },
+
   createdAt: {
     type: Date,
     default: Date.now
   }
+
+}, {
+  timestamps: true
 });
 
 module.exports = mongoose.model('Product', productSchema);
