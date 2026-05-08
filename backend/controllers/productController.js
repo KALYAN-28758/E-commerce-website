@@ -26,8 +26,9 @@ exports.createProduct = async (req, res) => {
 
   try {
 
-    console.log("\n📦 PRODUCT BODY RECEIVED:");
-    console.log(req.body);
+    console.log("\n========== PRODUCT API HIT ==========");
+    console.log("BODY:");
+    console.log(JSON.stringify(req.body, null, 2));
 
     const {
       name,
@@ -40,15 +41,18 @@ exports.createProduct = async (req, res) => {
       image
     } = req.body;
 
-    // Required validation
-    if (!name || !price || !cat || !desc) {
+    console.log("RAW VALUES:");
+    console.log({
+      name,
+      price,
+      orig,
+      cat,
+      desc,
+      emoji,
+      stock,
+      image
+    });
 
-      return res.status(400).json({
-        message: 'Name, price, category and description are required.'
-      });
-    }
-
-    // Allowed categories
     const allowedCategories = [
       'Electronics',
       'Kitchen',
@@ -59,22 +63,26 @@ exports.createProduct = async (req, res) => {
       'Other'
     ];
 
-    // Fix category formatting
     const formattedCategory =
-      String(cat).trim().charAt(0).toUpperCase() +
-      String(cat).trim().slice(1).toLowerCase();
+      cat
+        ? cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase()
+        : '';
 
-    // Validate category
+    console.log("FORMATTED CATEGORY:", formattedCategory);
+
     if (!allowedCategories.includes(formattedCategory)) {
 
+      console.log("❌ INVALID CATEGORY");
+
       return res.status(400).json({
-        message: `Invalid category. Allowed: ${allowedCategories.join(', ')}`
+        message: "Invalid category",
+        received: formattedCategory
       });
     }
 
     const productData = {
 
-      name: String(name).trim(),
+      name: String(name || '').trim(),
 
       price: Number(price),
 
@@ -82,7 +90,7 @@ exports.createProduct = async (req, res) => {
 
       cat: formattedCategory,
 
-      desc: String(desc).trim(),
+      desc: String(desc || '').trim(),
 
       emoji: emoji || '🛍️',
 
@@ -91,39 +99,41 @@ exports.createProduct = async (req, res) => {
       image: image || ''
     };
 
-    console.log("\n✅ FINAL PRODUCT DATA:");
+    console.log("\nFINAL PRODUCT DATA:");
     console.log(productData);
 
     const product = await Product.create(productData);
 
-    console.log("\n✅ PRODUCT INSERTED SUCCESSFULLY:");
+    console.log("\n✅ PRODUCT SAVED:");
     console.log(product);
 
     res.status(201).json(product);
 
   } catch (error) {
 
-    console.log("\n❌ PRODUCT CREATE ERROR:");
+    console.log("\n❌ PRODUCT SAVE ERROR:");
     console.log(error);
 
     if (error.errors) {
 
-      console.log("\n🚨 VALIDATION ERRORS:");
-
       Object.keys(error.errors).forEach((key) => {
 
-        console.log(`${key}: ${error.errors[key].message}`);
+        console.log(
+          "FIELD:",
+          key,
+          "MESSAGE:",
+          error.errors[key].message
+        );
 
       });
     }
 
     res.status(500).json({
-      message: 'Failed to create product.',
+      message: "Failed to create product",
       error: error.message
     });
   }
 };
-
 exports.updateProduct = async (req, res) => {
 
   try {
